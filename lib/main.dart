@@ -6,7 +6,9 @@ void main() {
     const MaterialApp(
       home: SafeArea(
         child: Scaffold(
-          body: Collection(),
+          body: SingleChildScrollView(
+            child: Collection(),
+          ),
         ),
       ),
     ),
@@ -25,6 +27,7 @@ class _CollectionState extends State<Collection> {
   final Border highlightBorder = Border.all(color: Colors.blue, width: 3);
   final Border border = Border.all(width: 1, color: Colors.grey);
 
+
   @override
   Widget build(BuildContext context) {
     return Padding(
@@ -40,6 +43,31 @@ class _CollectionState extends State<Collection> {
           const SizedBox(
             height: 20,
           ),
+          TextFormField(
+            onFieldSubmitted: (value) { //отдает строку кот. можно исп-ть
+              if (value.isNotEmpty) {
+                final searchedIndex = butterflyList.indexWhere(
+                  (x) => x.name.contains(value),
+                );
+                if (searchedIndex >= 0) {
+                  setState(() {
+                    selectedIndex = searchedIndex;
+                  });
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text('Ничего не найдено 😞'),
+                      backgroundColor: Colors.red,
+                    ),
+                  );
+                }
+              }
+            },
+            decoration: const InputDecoration(hintText: 'Поиск'),
+          ),
+          const SizedBox(
+            height: 20,
+          ),
           SizedBox(
             height: 60,
             child: ListView.builder(
@@ -49,7 +77,8 @@ class _CollectionState extends State<Collection> {
                   return GestureDetector(
                     onTap: () {
                       setState(() {
-                        selectedIndex = index; //чтобы пометить что индекс элемента выбран
+                        selectedIndex =
+                            index; //чтобы пометить что индекс элемента выбран
                       });
                     },
                     child: Padding(
@@ -58,7 +87,8 @@ class _CollectionState extends State<Collection> {
                         height: 50,
                         width: 130,
                         decoration: BoxDecoration(
-                          border: index == selectedIndex ? highlightBorder : border,
+                          border:
+                              index == selectedIndex ? highlightBorder : border,
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(10),
                         ),
@@ -75,7 +105,8 @@ class _CollectionState extends State<Collection> {
           Padding(
             padding: const EdgeInsets.all(8.0),
             child: Text(
-              butterflyList[selectedIndex].description, //получаем эл-т из списка
+              butterflyList[selectedIndex]
+                  .description, //получаем эл-т из списка
             ),
           ),
           Padding(
